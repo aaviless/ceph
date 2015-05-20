@@ -1697,6 +1697,7 @@ struct pg_history_t {
 };
 WRITE_CLASS_ENCODER(pg_history_t)
 
+// LOOK AT last* same*
 inline ostream& operator<<(ostream& out, const pg_history_t& h) {
   return out << "ec=" << h.epoch_created
 	     << " les/c " << h.last_epoch_started << "/" << h.last_epoch_clean

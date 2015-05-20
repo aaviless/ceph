@@ -3037,6 +3037,24 @@ void OSD::build_past_intervals_parallel()
     }
   }
 
+  // Now that past_intervals have been recomputed let's fix the same_interval_since
+  // if it was cleared by import.
+  for (map<PG*,pistate>::iterator i = pis.begin(); i != pis.end(); ++i) {
+    PG *pg = i->first;
+    pistate& p = i->second;
+
+    // Verify same_interval_since is correct
+    if (pg->info.history.same_interval_since) {
+      assert(pg->info.history.same_interval_since == p.same_interval_since);
+    } else {
+      assert(p.same_interval_since);
+      dout(10) << __func__ << " fix same_interval_since " << p.same_interval_since << " pg " << *pg << dendl;
+      dout(10) << __func__ << " past_intervals " << pg->past_intervals << dendl;
+      // Fix it
+      pg->info.history.same_interval_since = p.same_interval_since;
+    }
+  }
+
   // write info only at the end.  this is necessary because we check
   // whether the past_intervals go far enough back or forward in time,
   // but we don't check for holes.  we could avoid it by discarding
